@@ -1,0 +1,22 @@
+server:
+  port: 8082 #端口
+#数据库链接配置
+spring:
+  datasource:
+    driver-class-name: com.mysql.cj.jdbc.Driver
+    url: jdbc:mysql://localhost:3306/user?serverTimezone=UTC&useUnicode=true&characterEncoding=utf-8&useSSL=true
+    username: root
+    password: nzf2626496
+  application:
+    name: user #服务名称
+  cloud: #要注意缩进，错了会无法注册
+    nacos:
+      server-addr: localhost:8848 #nacos注册中心
+
+#mybatis配置（控制台输出，驼峰命名自动匹配）
+mybatis:
+  configuration:
+    log-impl: org.apache.ibatis.logging.stdout.StdOutImpl
+    map-underscore-to-camel-case: true
+
+
