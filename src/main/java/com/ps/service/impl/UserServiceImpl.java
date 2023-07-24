@@ -1,16 +1,13 @@
 package com.ps.service.impl;
 
 import cn.binarywang.wx.miniapp.api.WxMaService;
-import cn.binarywang.wx.miniapp.api.impl.WxMaServiceImpl;
 import cn.binarywang.wx.miniapp.bean.WxMaJscode2SessionResult;
-import cn.binarywang.wx.miniapp.config.impl.WxMaDefaultConfigImpl;
-import cn.hutool.http.HttpUtil;
+import com.github.pagehelper.PageHelper;
 import com.ps.pojo.User;
 import com.ps.service.UserService;
 import com.ps.utils.JwtUtils;
 import me.chanjar.weixin.common.error.WxErrorException;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.beans.factory.annotation.Value;
 import org.springframework.data.mongodb.core.MongoTemplate;
 import org.springframework.data.mongodb.core.query.Criteria;
 import org.springframework.data.mongodb.core.query.Query;
@@ -18,6 +15,7 @@ import org.springframework.stereotype.Service;
 
 import java.time.LocalDateTime;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
 @Service
@@ -71,6 +69,27 @@ public class UserServiceImpl implements UserService {
 
             return data;
         }
+    }
+
+    @Override
+    public void alterUserInfo(User user) {
+        mongoTemplate.save(user, "user");
+    }
+
+    @Override
+    public User getUserInfoByToken(String openId) {
+        Query query = new Query(Criteria.where("user_id").is(openId));
+        User user = mongoTemplate.findOne(query, User.class, "user");
+        return user;
+    }
+
+    @Override
+    public List<User> getAllApproving(Integer pageSize, Integer pageNum) {
+        PageHelper.startPage(pageNum, pageSize);
+
+        Query query = new Query(Criteria.where("approved").is("审核中"));
+        List<User> users = mongoTemplate.find(query, User.class, "user");
+        return users;
     }
 
 }

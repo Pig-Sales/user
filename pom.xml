@@ -59,6 +59,12 @@
             <artifactId>utils</artifactId>
             <version>0.0.1-SNAPSHOT</version>
         </dependency>
+        <!--        分页-->
+        <dependency>
+            <groupId>com.github.pagehelper</groupId>
+            <artifactId>pagehelper</artifactId>
+            <version>5.3.0</version>
+        </dependency>
     </dependencies>
     <build>
         <plugins>
