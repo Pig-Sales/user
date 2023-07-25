@@ -87,7 +87,6 @@ public class UserServiceImpl implements UserService {
                     f.setAccessible(true);
                     if (f.getName() != "user_id" && f.get(user) != "" && f.get(user) != null) {
                         update.set(f.getName(), f.get(user));
-                        System.out.println(f.getName()+":   "+f.get(user));
                     }
                 }
             } catch (Exception e) {
@@ -104,7 +103,6 @@ public class UserServiceImpl implements UserService {
                     f.setAccessible(true);
                     if (f.getName() != "user_id" && f.getName() != "approved" && f.get(user) != "" && f.get(user) != null) {
                         update.set(f.getName(), f.get(user));
-                        System.out.println(f.getName()+":   "+f.get(user));
                     }
                 }
             } catch (Exception e) {
