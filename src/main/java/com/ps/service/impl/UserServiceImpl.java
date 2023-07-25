@@ -29,6 +29,7 @@ public class UserServiceImpl implements UserService {
     private MongoTemplate mongoTemplate;
     @Autowired
     private WxMaService wxMaService;
+
     @Value("${jwt.signKey}")
     private String signKey;
     @Value("${jwt.expire}")
@@ -50,7 +51,6 @@ public class UserServiceImpl implements UserService {
         Map<String, Object> claims = new HashMap<>();
         claims.put("openId", openId);
         User res = mongoTemplate.findOne(query, User.class,"user");
-        System.out.println(expire);
         if (res == null){
             User user = new User();
             user.setUser_id(openId);
@@ -64,7 +64,6 @@ public class UserServiceImpl implements UserService {
             data.put("token",jwt);
             data.put("is_user_info_complete", false);
 
-            return data;
         }else {
 
             claims.put("user_auth", res.getUser_auth());
@@ -75,8 +74,8 @@ public class UserServiceImpl implements UserService {
                 data.put("is_user_info_complete", false);
             else data.put("is_user_info_complete", true);
 
-            return data;
         }
+        return data;
     }
 
     @Override
