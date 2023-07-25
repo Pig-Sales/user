@@ -41,4 +41,9 @@ public class UserController {
     public Result getAllApproving(@RequestBody Page page){
         return Result.success(userService.getAllApproving(page.getPage_size(), page.getPage_num()));
     }
+
+    @PostMapping("/isSellerSafe")
+    public Result isSellerSafe(String openId){
+        return Result.success(userService.isSellerSafe(openId));
+    }
 }

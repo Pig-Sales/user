@@ -13,4 +13,6 @@ public interface UserService {
     User getUserInfoByToken(String openId);
 
     List<User> getAllApproving(Integer pageSize, Integer pageNum);
+
+    boolean isSellerSafe(String openId);
 }
