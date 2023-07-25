@@ -8,6 +8,7 @@ import com.ps.service.UserService;
 import com.ps.utils.JwtUtils;
 import me.chanjar.weixin.common.error.WxErrorException;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.data.mongodb.core.MongoTemplate;
 import org.springframework.data.mongodb.core.query.Criteria;
 import org.springframework.data.mongodb.core.query.Query;
@@ -19,6 +20,7 @@ import java.time.LocalDateTime;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.regex.Pattern;
 
 @Service
 public class UserServiceImpl implements UserService {
@@ -27,6 +29,10 @@ public class UserServiceImpl implements UserService {
     private MongoTemplate mongoTemplate;
     @Autowired
     private WxMaService wxMaService;
+    @Value("${jwt.signKey}")
+    private String signKey;
+    @Value("${jwt.expire}")
+    private Long expire;
 
     @Override
     public Map login(String code) {
@@ -44,6 +50,7 @@ public class UserServiceImpl implements UserService {
         Map<String, Object> claims = new HashMap<>();
         claims.put("openId", openId);
         User res = mongoTemplate.findOne(query, User.class,"user");
+        System.out.println(expire);
         if (res == null){
             User user = new User();
             user.setUser_id(openId);
@@ -52,7 +59,7 @@ public class UserServiceImpl implements UserService {
             mongoTemplate.insert(user,"user");
 
             claims.put("user_auth", null);
-            String jwt = JwtUtils.generateJwt(claims);
+            String jwt = JwtUtils.generateJwt(claims, signKey, expire);
 
             data.put("token",jwt);
             data.put("is_user_info_complete", false);
@@ -61,7 +68,7 @@ public class UserServiceImpl implements UserService {
         }else {
 
             claims.put("user_auth", res.getUser_auth());
-            String jwt = JwtUtils.generateJwt(claims);
+            String jwt = JwtUtils.generateJwt(claims, signKey, expire);
 
             data.put("token",jwt);
             if (res.getUser_auth() == null)
@@ -138,6 +145,14 @@ public class UserServiceImpl implements UserService {
         if(user.getApproved() == "审核通过")
             return true;
         return false;
+    }
+
+    @Override
+    public List<User> getUseridByName(String userName) {
+        Pattern pattern = Pattern.compile("^.*"+userName+".*$", Pattern.CASE_INSENSITIVE);
+        Query query = new Query(Criteria.where("username").regex(pattern));
+        List<User> users = mongoTemplate.find(query, User.class, "user");
+        return users;
     }
 
 }

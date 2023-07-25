@@ -65,6 +65,11 @@
             <artifactId>pagehelper</artifactId>
             <version>5.3.0</version>
         </dependency>
+        <!--        bootstrap配置加载-->
+        <dependency>
+            <groupId>org.springframework.cloud</groupId>
+            <artifactId>spring-cloud-starter-bootstrap</artifactId>
+        </dependency>
     </dependencies>
     <build>
         <plugins>

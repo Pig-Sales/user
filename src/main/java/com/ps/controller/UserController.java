@@ -1,20 +1,20 @@
 package com.ps.controller;
 
-import com.ps.pojo.Code;
-import com.ps.pojo.Page;
-import com.ps.pojo.Result;
-import com.ps.pojo.User;
+import com.ps.pojo.*;
 import com.ps.service.UserService;
 import com.ps.utils.JwtUtils;
 import io.jsonwebtoken.Claims;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.web.bind.annotation.*;
 
 @RestController
 public class UserController {
 
     @Autowired
-    public UserService userService;
+    private UserService userService;
+    @Value("${jwt.signKey}")
+    private String signKey;
 
     @PostMapping("/user/login")
     public Result login(@RequestBody Code code){
@@ -23,7 +23,7 @@ public class UserController {
 
     @PostMapping("/user/alterUserInfo")
     public Result alterUserInfo(@RequestBody User user, @RequestHeader String Authorization){
-        Claims claims = JwtUtils.parseJWT(Authorization);
+        Claims claims = JwtUtils.parseJWT(Authorization, signKey);
         String openId = (String) claims.get("openId");
         String user_auth = (String) claims.get("user_auth");
         userService.alterUserInfo(user, openId, user_auth);
@@ -32,7 +32,7 @@ public class UserController {
 
     @PostMapping("/user/getUserInfoByToken")
     public Result getUserInfoByToken(@RequestHeader String Authorization){
-        Claims claims = JwtUtils.parseJWT(Authorization);
+        Claims claims = JwtUtils.parseJWT(Authorization, signKey);
         String openId = (String) claims.get("openId");
         return Result.success(userService.getUserInfoByToken(openId));
     }
@@ -46,4 +46,10 @@ public class UserController {
     public Result isSellerSafe(String openId){
         return Result.success(userService.isSellerSafe(openId));
     }
+
+    @PostMapping("/getUseridByName")
+    public Result getUseridByName(String user_name){
+        return Result.success(userService.getUseridByName(user_name));
+    }
+
 }

@@ -15,4 +15,6 @@ public interface UserService {
     List<User> getAllApproving(Integer pageSize, Integer pageNum);
 
     boolean isSellerSafe(String openId);
+
+    List<User> getUseridByName(String userName);
 }
