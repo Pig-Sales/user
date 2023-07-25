@@ -41,7 +41,6 @@ public class UserServiceImpl implements UserService {
         }
 
         Query query = new Query(Criteria.where("user_id").is(openId));
-        Query query1 = new Query(Criteria.where("user_id").is(openId).and("user_auth").isNull());
         Map<String, Object> claims = new HashMap<>();
         claims.put("openId", openId);
         User res = mongoTemplate.findOne(query, User.class,"user");
