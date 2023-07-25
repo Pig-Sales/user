@@ -22,14 +22,17 @@ public class UserController {
     }
 
     @PostMapping("/user/alterUserInfo")
-    public Result alterUserInfo(@RequestBody User user){
-        userService.alterUserInfo(user);
+    public Result alterUserInfo(@RequestBody User user, @RequestHeader String Authorization){
+        Claims claims = JwtUtils.parseJWT(Authorization);
+        String openId = (String) claims.get("openId");
+        String user_auth = (String) claims.get("user_auth");
+        userService.alterUserInfo(user, openId, user_auth);
         return Result.success();
     }
 
     @PostMapping("/user/getUserInfoByToken")
-    public Result getUserInfoByToken(@RequestHeader String jwt){
-        Claims claims = JwtUtils.parseJWT(jwt);
+    public Result getUserInfoByToken(@RequestHeader String Authorization){
+        Claims claims = JwtUtils.parseJWT(Authorization);
         String openId = (String) claims.get("openId");
         return Result.success(userService.getUserInfoByToken(openId));
     }

@@ -11,8 +11,10 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.mongodb.core.MongoTemplate;
 import org.springframework.data.mongodb.core.query.Criteria;
 import org.springframework.data.mongodb.core.query.Query;
+import org.springframework.data.mongodb.core.query.Update;
 import org.springframework.stereotype.Service;
 
+import java.lang.reflect.Field;
 import java.time.LocalDateTime;
 import java.util.HashMap;
 import java.util.List;
@@ -72,9 +74,49 @@ public class UserServiceImpl implements UserService {
     }
 
     @Override
-    public void alterUserInfo(User user) {
-        mongoTemplate.save(user, "user");
+    public void alterUserInfo(User user, String openId, String user_auth) {
+        Update update = new Update();
+        Query query;
+        user.setUpdate_time(LocalDateTime.now().toString());
+        if(user.getUser_auth() == "admin") {
+            query = new Query(Criteria.where("user_id").is(user.getUser_id()));
+            try {
+                Class cls = user.getClass();
+                Field[] fields = cls.getDeclaredFields();
+                for (int i = 0; i < fields.length; i++) {
+                    Field f = fields[i];
+                    f.setAccessible(true);
+                    if (f.getName() != "user_id" && f.get(user) != "" && f.get(user) != null) {
+                        update.set(f.getName(), f.get(user));
+                        System.out.println(f.getName()+":   "+f.get(user));
+                    }
+                }
+            } catch (Exception e) {
+                e.printStackTrace();
+            }
+        }
+        else {
+            query = new Query(Criteria.where("user_id").is(openId));
+            try {
+                Class cls = user.getClass();
+                Field[] fields = cls.getDeclaredFields();
+                for (int i = 0; i < fields.length; i++) {
+                    Field f = fields[i];
+                    f.setAccessible(true);
+                    if (f.getName() != "user_id" && f.getName() != "approved" && f.get(user) != "" && f.get(user) != null) {
+                        update.set(f.getName(), f.get(user));
+                        System.out.println(f.getName()+":   "+f.get(user));
+                    }
+                }
+            } catch (Exception e) {
+                e.printStackTrace();
+            }
+        }
+        mongoTemplate.updateFirst(query, update, User.class, "user");
     }
+
+
+
 
     @Override
     public User getUserInfoByToken(String openId) {

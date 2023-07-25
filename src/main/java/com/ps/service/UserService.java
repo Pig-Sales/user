@@ -8,7 +8,7 @@ import java.util.Map;
 public interface UserService {
     Map login(String code);
 
-    void alterUserInfo(User user);
+    void alterUserInfo(User user, String openId, String user_auth);
 
     User getUserInfoByToken(String openId);
 
