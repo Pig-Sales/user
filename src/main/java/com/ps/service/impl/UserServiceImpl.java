@@ -109,6 +109,8 @@ public class UserServiceImpl implements UserService {
                     f.setAccessible(true);
                     if (f.getName() != "user_id" && f.getName() != "approved" && f.get(user) != "" && f.get(user) != null) {
                         update.set(f.getName(), f.get(user));
+                    }else if (f.getName() == "approved" && f.get(user) == "审核中") {
+                        update.set(f.getName(), f.get(user));
                     }
                 }
             } catch (Exception e) {
