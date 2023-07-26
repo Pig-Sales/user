@@ -83,7 +83,7 @@ public class UserServiceImpl implements UserService {
         Update update = new Update();
         Query query;
         user.setUpdate_time(LocalDateTime.now().toString());
-        if(user.getUser_auth() == "admin") {
+        if(user_auth.equals("admin")) {
             query = new Query(Criteria.where("user_id").is(user.getUser_id()));
             try {
                 Class cls = user.getClass();
@@ -109,7 +109,7 @@ public class UserServiceImpl implements UserService {
                     f.setAccessible(true);
                     if (f.getName() != "user_id" && f.getName() != "approved" && f.get(user) != "" && f.get(user) != null) {
                         update.set(f.getName(), f.get(user));
-                    }else if (f.getName() == "approved" && f.get(user) == "审核中") {
+                    }else if (f.getName().equals("approved") && f.get(user).equals("审核中")) {
                         update.set(f.getName(), f.get(user));
                     }
                 }
