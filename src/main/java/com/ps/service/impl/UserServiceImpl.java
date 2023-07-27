@@ -7,7 +7,6 @@ import com.ps.pojo.User;
 import com.ps.service.UserService;
 import com.ps.utils.AliOSSUtils;
 import com.ps.utils.JwtUtils;
-import com.sun.media.jfxmedia.logging.Logger;
 import lombok.extern.slf4j.Slf4j;
 import me.chanjar.weixin.common.error.WxErrorException;
 import org.springframework.beans.factory.annotation.Autowired;
