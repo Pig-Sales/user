@@ -88,13 +88,20 @@ public class UserServiceImpl implements UserService {
     }
 
     @Override
-    public void alterUserInfo(User user, String openId, String user_auth) {
+    public String alterUserInfo(User user, String openId, String user_auth) {
         Update update = new Update();
         Query query;
+        String jwt = "";
         user.setUpdate_time(LocalDateTime.now().toString());
         if(Objects.equals(user_auth,"admin")) {
             query = new Query(Criteria.where("user_id").is(user.getUser_id()));
             try {
+                if(user.getUser_auth() != null && Objects.equals(openId,user.getUser_id())){
+                    Map<String, Object> claims = new HashMap<>();
+                    claims.put("openId", openId);
+                    claims.put("user_auth", user.getUser_auth());
+                    jwt = JwtUtils.generateJwt(claims, signKey, expire);
+                }
                 Class cls = user.getClass();
                 Field[] fields = cls.getDeclaredFields();
                 for (int i = 0; i < fields.length; i++) {
@@ -111,6 +118,12 @@ public class UserServiceImpl implements UserService {
         else {
             query = new Query(Criteria.where("user_id").is(openId));
             try {
+                if(user.getUser_auth() != null){
+                    Map<String, Object> claims = new HashMap<>();
+                    claims.put("openId", openId);
+                    claims.put("user_auth", user.getUser_auth());
+                    jwt = JwtUtils.generateJwt(claims, signKey, expire);
+                }
                 Class cls = user.getClass();
                 Field[] fields = cls.getDeclaredFields();
                 for (int i = 0; i < fields.length; i++) {
@@ -127,6 +140,7 @@ public class UserServiceImpl implements UserService {
             }
         }
         mongoTemplate.updateFirst(query, update, User.class, "user");
+        return jwt;
     }
 
 

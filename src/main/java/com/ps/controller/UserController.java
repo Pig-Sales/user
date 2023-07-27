@@ -30,7 +30,12 @@ public class UserController {
         Claims claims = JwtUtils.parseJWT(Authorization, signKey);
         String openId = (String) claims.get("openId");
         String user_auth = (String) claims.get("user_auth");
-        userService.alterUserInfo(user, openId, user_auth);
+        String jwt = userService.alterUserInfo(user, openId, user_auth);
+        if (jwt != ""){
+            Map<String,String> map = new HashMap<>();
+            map.put("token", jwt);
+            return Result.success(map);
+        }
         return Result.success();
     }
 

@@ -37,7 +37,7 @@ public class AliOSSUtils {
         String filePath=fileName;
         if(directory!=null)
             filePath = directory + "/" + filePath;
-        ossClient.putObject(bucketName,filePath, inputStream);
+        ossClient.putObject(bucketName, filePath, inputStream);
 
         //文件访问路径
         String url = endpoint.split("//")[0] + "//" + bucketName + "." + endpoint.split("//")[1] + "/" + filePath;
