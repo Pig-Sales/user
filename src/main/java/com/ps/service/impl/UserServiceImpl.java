@@ -5,7 +5,10 @@ import cn.binarywang.wx.miniapp.bean.WxMaJscode2SessionResult;
 import com.github.pagehelper.PageHelper;
 import com.ps.pojo.User;
 import com.ps.service.UserService;
+import com.ps.utils.AliOSSUtils;
 import com.ps.utils.JwtUtils;
+import com.sun.media.jfxmedia.logging.Logger;
+import lombok.extern.slf4j.Slf4j;
 import me.chanjar.weixin.common.error.WxErrorException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
@@ -14,7 +17,9 @@ import org.springframework.data.mongodb.core.query.Criteria;
 import org.springframework.data.mongodb.core.query.Query;
 import org.springframework.data.mongodb.core.query.Update;
 import org.springframework.stereotype.Service;
+import org.springframework.web.multipart.MultipartFile;
 
+import java.io.IOException;
 import java.lang.reflect.Field;
 import java.time.LocalDateTime;
 import java.util.HashMap;
@@ -23,6 +28,7 @@ import java.util.Map;
 import java.util.Objects;
 import java.util.regex.Pattern;
 
+@Slf4j
 @Service
 public class UserServiceImpl implements UserService {
 
@@ -30,6 +36,8 @@ public class UserServiceImpl implements UserService {
     private MongoTemplate mongoTemplate;
     @Autowired
     private WxMaService wxMaService;
+    @Autowired
+    AliOSSUtils aliOSSUtils;
 
     @Value("${jwt.signKey}")
     private String signKey;
@@ -155,6 +163,19 @@ public class UserServiceImpl implements UserService {
         Query query = new Query(Criteria.where("username").regex(pattern));
         List<User> users = mongoTemplate.find(query, User.class, "user");
         return users;
+    }
+
+    @Override
+    public String uploadImage(MultipartFile image) {
+        String url;
+        try {
+            url = aliOSSUtils.upload(image, "image");
+        } catch (IOException e) {
+            throw new RuntimeException(e);
+        }
+        log.info("上传文件：{}", image.getOriginalFilename());
+        log.info("URL：{}", url);
+        return url;
     }
 
 }

@@ -7,6 +7,10 @@ import io.jsonwebtoken.Claims;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.multipart.MultipartFile;
+
+import java.util.HashMap;
+import java.util.Map;
 
 @RestController
 public class UserController {
@@ -42,6 +46,13 @@ public class UserController {
         return Result.success(userService.getAllApproving(page.getPage_size(), page.getPage_num()));
     }
 
+    @PostMapping("/user/uploadImage")
+    public Result uploadImage(MultipartFile image){
+        Map<String,String> map = new HashMap<>();
+        map.put("image_url",userService.uploadImage(image));
+        return Result.success(map);
+    }
+
     @PostMapping("/isSellerSafe")
     public Result isSellerSafe(String openId){
         return Result.success(userService.isSellerSafe(openId));
@@ -51,5 +62,7 @@ public class UserController {
     public Result getUseridByName(String user_name){
         return Result.success(userService.getUseridByName(user_name));
     }
+
+
 
 }
