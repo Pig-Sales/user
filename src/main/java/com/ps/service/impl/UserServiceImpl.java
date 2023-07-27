@@ -20,6 +20,7 @@ import java.time.LocalDateTime;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Objects;
 import java.util.regex.Pattern;
 
 @Service
@@ -83,7 +84,7 @@ public class UserServiceImpl implements UserService {
         Update update = new Update();
         Query query;
         user.setUpdate_time(LocalDateTime.now().toString());
-        if(user_auth.equals("admin")) {
+        if(Objects.equals(user_auth,"admin")) {
             query = new Query(Criteria.where("user_id").is(user.getUser_id()));
             try {
                 Class cls = user.getClass();
@@ -109,7 +110,7 @@ public class UserServiceImpl implements UserService {
                     f.setAccessible(true);
                     if (f.getName() != "user_id" && f.getName() != "approved" && f.get(user) != "" && f.get(user) != null) {
                         update.set(f.getName(), f.get(user));
-                    }else if (f.getName().equals("approved") && f.get(user).equals("审核中")) {
+                    }else if (Objects.equals(f.getName(),"approved") && Objects.equals(f.get(user),"审核通过")) {
                         update.set(f.getName(), f.get(user));
                     }
                 }
