@@ -165,9 +165,7 @@ public class UserServiceImpl implements UserService {
     public boolean isSellerSafe(String openId) {
         Query query = new Query(Criteria.where("user_id").is(openId));
         User user = mongoTemplate.findOne(query, User.class, "user");
-        if(user.getApproved() == "审核通过")
-            return true;
-        return false;
+        return user != null && Objects.equals(user.getApproved(), "审核通过");
     }
 
     @Override
