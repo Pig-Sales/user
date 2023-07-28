@@ -59,8 +59,8 @@ public class UserController {
     }
 
     @PostMapping("/isSellerSafe")
-    public Result isSellerSafe(String openId){
-        return Result.success(userService.isSellerSafe(openId));
+    public Result isSellerSafe(@RequestBody User user){
+        return Result.success(userService.isSellerSafe(user.getUser_id()));
     }
 
     @PostMapping("/getUseridByName")
