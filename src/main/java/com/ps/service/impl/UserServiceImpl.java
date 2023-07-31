@@ -170,8 +170,8 @@ public class UserServiceImpl implements UserService {
 
     @Override
     public List<User> getUseridByName(String userName) {
-        Pattern pattern = Pattern.compile("^.*"+userName+".*$", Pattern.CASE_INSENSITIVE);
-        Query query = new Query(Criteria.where("username").regex(pattern));
+//        Pattern pattern = Pattern.compile("^.*"+userName+".*$", Pattern.CASE_INSENSITIVE);
+        Query query = new Query(Criteria.where("username").regex(userName));
         List<User> users = mongoTemplate.find(query, User.class, "user");
         return users;
     }

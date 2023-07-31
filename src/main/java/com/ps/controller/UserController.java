@@ -64,8 +64,8 @@ public class UserController {
     }
 
     @PostMapping("/getUseridByName")
-    public Result getUseridByName(String user_name){
-        return Result.success(userService.getUseridByName(user_name));
+    public Result getUseridByName(@RequestBody User user){
+        return Result.success(userService.getUseridByName(user.getUsername()));
     }
 
 
