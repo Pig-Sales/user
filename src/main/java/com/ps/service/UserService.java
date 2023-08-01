@@ -20,4 +20,6 @@ public interface UserService {
     List<User> getUseridByName(String userName);
 
     String uploadImage(MultipartFile image);
+
+    User getUserInfoById(String userId);
 }

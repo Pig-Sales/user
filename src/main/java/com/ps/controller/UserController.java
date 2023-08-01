@@ -68,6 +68,10 @@ public class UserController {
         return Result.success(userService.getUseridByName(user.getUsername()));
     }
 
+    @PostMapping("/getUserInfoById")
+    public Result getUserInfoById(@RequestBody User user){
+        return Result.success(userService.getUserInfoById(user.getUser_id()));
+    }
 
 
 }

@@ -189,4 +189,11 @@ public class UserServiceImpl implements UserService {
         return url;
     }
 
+    @Override
+    public User getUserInfoById(String userId) {
+        Query query = new Query(Criteria.where("user_id").is(userId));
+        User user = mongoTemplate.findOne(query, User.class, "user");
+        return user;
+    }
+
 }
