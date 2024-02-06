@@ -43,7 +43,8 @@ public class UserController {
     public Result getUserInfoByToken(@RequestHeader String Authorization){
         Claims claims = JwtUtils.parseJWT(Authorization, signKey);
         String openId = (String) claims.get("openId");
-        return Result.success(userService.getUserInfoByToken(openId));
+        String phone = (String) claims.get("phone");
+        return Result.success(userService.getUserInfoByToken(openId, phone));
     }
 
     @PostMapping("/user/getAllApproving")
@@ -73,5 +74,9 @@ public class UserController {
         return Result.success(userService.getUserInfoById(user.getUser_id()));
     }
 
+    @PostMapping("/user/loginByPassword")
+    public Result loginByPassword(@RequestBody User user){
+        return Result.success(userService.loginByPassword(user));
+    }
 
 }

@@ -11,7 +11,7 @@ public interface UserService {
 
     String alterUserInfo(User user, String openId, String user_auth);
 
-    User getUserInfoByToken(String openId);
+    User getUserInfoByToken(String openId, String phone);
 
     List<User> getAllApproving(Integer pageSize, Integer pageNum);
 
@@ -22,4 +22,6 @@ public interface UserService {
     String uploadImage(MultipartFile image);
 
     User getUserInfoById(String userId);
+
+    Map loginByPassword(User user);
 }

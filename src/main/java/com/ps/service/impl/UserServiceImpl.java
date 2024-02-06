@@ -44,6 +44,50 @@ public class UserServiceImpl implements UserService {
     private Long expire;
 
     @Override
+    public Map loginByPassword(User user1) {
+        Map<String, Object> data = new HashMap<>();
+        String phone = user1.getPhone_number();
+        String password = user1.getPassword();
+
+        Query query = new Query(Criteria.where("phone_number").is(phone));
+        Map<String, Object> claims = new HashMap<>();
+        User res = mongoTemplate.findOne(query, User.class,"user");
+        claims.put("phone", phone);
+
+        if (res == null){
+            User user = new User();
+            user.setPhone_number(phone);
+            user.setPassword(password);
+            user.setCreate_time(LocalDateTime.now().toString());
+            user.setUpdate_time(LocalDateTime.now().toString());
+            mongoTemplate.insert(user,"user");
+
+            claims.put("user_auth", null);
+            String jwt = JwtUtils.generateJwt(claims, signKey, expire);
+
+            data.put("token",jwt);
+            data.put("is_user_info_complete", false);
+
+        }else {
+            if (Objects.equals(res.getPassword(), password)) {
+                claims.put("user_auth", res.getUser_auth());
+                String jwt = JwtUtils.generateJwt(claims, signKey, expire);
+
+                data.put("token",jwt);
+                if (res.getUser_auth() == null) {
+                    data.put("is_user_info_complete", false);
+                } else {
+                    data.put("is_user_info_complete", true);
+                }
+            }
+            else {
+                return null;
+            }
+        }
+        return data;
+    }
+
+    @Override
     public Map login(String code) {
         Map<String, Object> data = new HashMap<>();
         String openId;
@@ -78,9 +122,11 @@ public class UserServiceImpl implements UserService {
             String jwt = JwtUtils.generateJwt(claims, signKey, expire);
 
             data.put("token",jwt);
-            if (res.getUser_auth() == null)
+            if (res.getUser_auth() == null) {
                 data.put("is_user_info_complete", false);
-            else data.put("is_user_info_complete", true);
+            } else {
+                data.put("is_user_info_complete", true);
+            }
 
         }
         return data;
@@ -146,8 +192,13 @@ public class UserServiceImpl implements UserService {
 
 
     @Override
-    public User getUserInfoByToken(String openId) {
-        Query query = new Query(Criteria.where("user_id").is(openId));
+    public User getUserInfoByToken(String openId, String phone) {
+        Query query = new Query();
+        if (openId == null) {
+            query = new Query(Criteria.where("phone_number").is(phone));
+        }else {
+            query = new Query(Criteria.where("user_id").is(openId));
+        }
         User user = mongoTemplate.findOne(query, User.class, "user");
         return user;
     }
